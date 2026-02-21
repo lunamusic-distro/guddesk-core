@@ -67,6 +67,11 @@ export default async function WidgetSettingsPage({
             showBranding: widgetSettings?.showBranding ?? true,
             requireEmail: widgetSettings?.requireEmail ?? false,
             offlineFormTimeout: widgetSettings?.offlineFormTimeout ?? null,
+            pageVisibilityMode:
+              (widgetSettings?.pageVisibilityMode as "exclude" | "include") ??
+              "exclude",
+            pageVisibilityPatterns:
+              (widgetSettings?.pageVisibilityPatterns as string[]) ?? [],
           }}
         />
       </div>

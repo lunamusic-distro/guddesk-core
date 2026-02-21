@@ -1,5 +1,6 @@
 import {
   config,
+  configLoaded,
   conversationId,
   visitorId,
   visitorToken,
@@ -43,6 +44,7 @@ export async function fetchConfig(): Promise<void> {
     `/api/widget/config?appId=${encodeURIComponent(appId)}`,
   );
   config.value = data;
+  configLoaded.value = true;
 }
 
 export async function authenticate(): Promise<void> {

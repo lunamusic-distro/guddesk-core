@@ -19,6 +19,11 @@ const widgetSettingsSchema = z.object({
   requireEmail: z.boolean().optional(),
   suggestArticles: z.boolean().optional(),
   offlineFormTimeout: z.number().int().min(1).max(30).optional().nullable(),
+  pageVisibilityMode: z.enum(["exclude", "include"]).optional(),
+  pageVisibilityPatterns: z
+    .array(z.string().min(1).max(200))
+    .max(50)
+    .optional(),
 });
 
 export async function updateWidgetSettings(

@@ -19,6 +19,8 @@ export interface WidgetConfig {
   pusherKey: string | null;
   pusherCluster: string | null;
   offlineFormTimeout: number | null; // minutes — null means disabled
+  pageVisibilityMode: "exclude" | "include";
+  pageVisibilityPatterns: string[];
 }
 
 // Core state
@@ -43,7 +45,11 @@ export const config = signal<WidgetConfig>({
   pusherKey: null,
   pusherCluster: null,
   offlineFormTimeout: null,
+  pageVisibilityMode: "exclude",
+  pageVisibilityPatterns: [],
 });
+
+export const configLoaded = signal(false);
 
 // Derived
 export const needsEmail = computed(

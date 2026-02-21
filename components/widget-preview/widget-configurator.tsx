@@ -27,6 +27,8 @@ interface WidgetConfiguratorProps {
     showBranding: boolean;
     requireEmail: boolean;
     offlineFormTimeout: number | null;
+    pageVisibilityMode: "exclude" | "include";
+    pageVisibilityPatterns: string[];
   };
 }
 
@@ -39,7 +41,12 @@ export function WidgetConfigurator({
 
   function handleSave() {
     startTransition(async () => {
-      const result = await updateWidgetSettings(workspaceId, config);
+      const result = await updateWidgetSettings(workspaceId, {
+        ...config,
+        pageVisibilityPatterns: config.pageVisibilityPatterns.filter(
+          (p) => p.trim() !== "",
+        ),
+      });
 
       if (result.status === "error") {
         toast.error(result.message || "Failed to save settings");
@@ -192,6 +199,94 @@ export function WidgetConfigurator({
                 </span>
               </div>
             )}
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <Label>Page visibility</Label>
+              <p className="text-xs text-muted-foreground">
+                Control which pages display the chat widget.
+              </p>
+            </div>
+
+            <Select
+              value={config.pageVisibilityMode}
+              onValueChange={(value: "exclude" | "include") =>
+                setConfig((s) => ({ ...s, pageVisibilityMode: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="exclude">
+                  Show on all pages except...
+                </SelectItem>
+                <SelectItem value="include">Only show on...</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {config.pageVisibilityPatterns.map((pattern, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Input
+                  value={pattern}
+                  onChange={(e) => {
+                    const updated = [...config.pageVisibilityPatterns];
+                    updated[index] = e.target.value;
+                    setConfig((s) => ({
+                      ...s,
+                      pageVisibilityPatterns: updated,
+                    }));
+                  }}
+                  placeholder="/admin/*"
+                  className="flex-1 font-mono text-sm"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    const updated = config.pageVisibilityPatterns.filter(
+                      (_, i) => i !== index,
+                    );
+                    setConfig((s) => ({
+                      ...s,
+                      pageVisibilityPatterns: updated,
+                    }));
+                  }}
+                >
+                  <Icons.trash className="size-4 text-muted-foreground" />
+                </Button>
+              </div>
+            ))}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setConfig((s) => ({
+                  ...s,
+                  pageVisibilityPatterns: [
+                    ...s.pageVisibilityPatterns,
+                    "",
+                  ],
+                }))
+              }
+            >
+              <Icons.add className="mr-2 size-4" />
+              Add pattern
+            </Button>
+
+            <p className="text-xs text-muted-foreground">
+              Use <code className="rounded bg-muted px-1 text-[10px]">*</code>{" "}
+              to match a single path segment and{" "}
+              <code className="rounded bg-muted px-1 text-[10px]">**</code> to
+              match multiple segments. Example:{" "}
+              <code className="rounded bg-muted px-1 text-[10px]">
+                /admin/*
+              </code>{" "}
+              matches <span className="italic">/admin/dashboard</span> but not{" "}
+              <span className="italic">/admin/users/1</span>.
+            </p>
           </div>
         </div>
 
