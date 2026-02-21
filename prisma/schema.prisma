@@ -198,6 +198,8 @@ model WidgetSettings {
   requireEmail     Boolean  @default(false)
   suggestArticles    Boolean  @default(true)
   offlineFormTimeout Int?     @map(name: "offline_form_timeout") // minutes — null means disabled
+  pageVisibilityMode    String @default("exclude") // "exclude" or "include"
+  pageVisibilityPatterns Json   @default("[]")      // JSON array of glob-pattern strings
   createdAt          DateTime @default(now()) @map(name: "created_at")
   updatedAt          DateTime @updatedAt @map(name: "updated_at")
 

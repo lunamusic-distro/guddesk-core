@@ -34,6 +34,8 @@ export async function GET(req: NextRequest) {
           requireEmail: true,
           suggestArticles: true,
           offlineFormTimeout: true,
+          pageVisibilityMode: true,
+          pageVisibilityPatterns: true,
         },
       },
     },
@@ -55,6 +57,8 @@ export async function GET(req: NextRequest) {
     requireEmail: workspace.widgetSettings?.requireEmail ?? false,
     suggestArticles: workspace.widgetSettings?.suggestArticles ?? true,
     offlineFormTimeout: workspace.widgetSettings?.offlineFormTimeout ?? null,
+    pageVisibilityMode: workspace.widgetSettings?.pageVisibilityMode ?? "exclude",
+    pageVisibilityPatterns: workspace.widgetSettings?.pageVisibilityPatterns ?? [],
     // Pusher credentials for real-time messaging (public keys only)
     pusherKey: env.NEXT_PUBLIC_PUSHER_KEY || null,
     pusherCluster: env.NEXT_PUBLIC_PUSHER_CLUSTER || null,

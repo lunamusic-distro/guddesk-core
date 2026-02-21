@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 
-import { isOpen, config, conversationId, messages, showOfflineForm, restoreState } from "./stores/state";
+import { isOpen, config, configLoaded, conversationId, messages, showOfflineForm, restoreState } from "./stores/state";
 import { initClient, fetchConfig, authenticate, fetchMessages } from "./api/client";
+import { shouldShowWidget } from "./utils/page-match";
 import { initPusher, subscribeToConversation, disconnect, isConnected } from "./api/pusher";
 import { getStyles } from "./utils/styles";
 import { ChatWindow } from "./components/chat-window";
@@ -22,6 +24,7 @@ export function WidgetApp({ appId, baseUrl, pusherKey, pusherCluster }: WidgetAp
   const pusherInitRef = useRef(false);
   const offlineTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastVisitorMsgCountRef = useRef(0);
+  const isHidden = useSignal(false);
 
   // Start polling for new messages when Pusher is not available
   function startPolling() {
@@ -68,6 +71,17 @@ export function WidgetApp({ appId, baseUrl, pusherKey, pusherCluster }: WidgetAp
       fetchConfig().catch(() => {}),
       authenticate().catch(() => {}),
     ]).then(() => {
+      // Check if widget should be hidden on this page
+      const visible = shouldShowWidget(
+        window.location.pathname,
+        config.value.pageVisibilityMode,
+        config.value.pageVisibilityPatterns,
+      );
+      if (!visible) {
+        isHidden.value = true;
+        return;
+      }
+
       // If we have a restored conversation, fetch its messages
       if (conversationId.value) {
         fetchMessages().catch(() => {});
@@ -155,6 +169,11 @@ export function WidgetApp({ appId, baseUrl, pusherKey, pusherCluster }: WidgetAp
       }
     };
   }, [messages.value, conversationId.value, config.value.offlineFormTimeout]);
+
+  // Don't render until config is loaded; hide if page is excluded
+  if (!configLoaded.value || isHidden.value) {
+    return null;
+  }
 
   return (
     <>
