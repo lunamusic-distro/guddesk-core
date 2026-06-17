@@ -19,6 +19,8 @@ export const env = createEnv({
     // Slack integration
     SLACK_CLIENT_ID: z.string().optional(),
     SLACK_CLIENT_SECRET: z.string().optional(),
+    // HMAC API secret for external integrations (Hertz main app)
+    GUDESK_API_SECRET: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),
@@ -43,6 +45,7 @@ export const env = createEnv({
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
     SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+    GUDESK_API_SECRET: process.env.GUDESK_API_SECRET,
     NEXT_PUBLIC_CLARITY_PROJECT_ID: process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID,
   },
 })

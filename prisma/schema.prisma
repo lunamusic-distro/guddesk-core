@@ -144,6 +144,8 @@ model Workspace {
   automationRules    AutomationRule[]
   slackIntegration   SlackIntegration?
   analyticsSnapshots AnalyticsSnapshot[]
+  slaPolicies        SlaPolicy[]
+  slaTimers          SlaTimer[]
 
   @@map(name: "workspaces")
 }
@@ -252,6 +254,7 @@ model Conversation {
   visitor   Visitor          @relation(fields: [visitorId], references: [id], onDelete: Cascade)
   assignee  WorkspaceMember? @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
   messages  Message[]
+  slaTimer  SlaTimer?
 
   @@index([workspaceId, status])
   @@index([workspaceId, assigneeId])
@@ -457,5 +460,56 @@ model AnalyticsSnapshot {
   @@unique([workspaceId, date])
   @@index([workspaceId, date])
   @@map(name: "analytics_snapshots")
+}
+
+// ─── SLA Policies ────────────────────────────────────────
+
+enum SlaPriority {
+  STANDARD
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model SlaPolicy {
+  id               String      @id @default(cuid())
+  workspaceId      String
+  name             String
+  priority         SlaPriority
+  firstResponseMs  Int         // target first response in milliseconds
+  resolutionMs     Int         // target resolution in milliseconds
+  isEnabled        Boolean     @default(true)
+  createdAt        DateTime    @default(now()) @map(name: "created_at")
+  updatedAt        DateTime    @updatedAt @map(name: "updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, priority])
+  @@index([workspaceId])
+  @@map(name: "sla_policies")
+}
+
+model SlaTimer {
+  id                   String    @id @default(cuid())
+  conversationId       String    @unique
+  workspaceId          String
+  policyId             String?
+  priority             SlaPriority @default(STANDARD)
+  firstResponseAt      DateTime?
+  firstResponseMs      Int?
+  resolvedAt           DateTime?
+  resolutionMs         Int?
+  firstResponseBreached Boolean  @default(false)
+  resolutionBreached    Boolean  @default(false)
+  createdAt            DateTime  @default(now()) @map(name: "created_at")
+  updatedAt            DateTime  @updatedAt @map(name: "updated_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy       SlaPolicy?   @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId])
+  @@index([conversationId])
+  @@map(name: "sla_timers")
 }
 
