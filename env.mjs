@@ -10,7 +10,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
     DATABASE_URL: z.string().min(1),
-    RESEND_API_KEY: z.string().min(1),
+    RESEND_API_KEY: z.string().optional(),
     // Pusher (real-time messaging)
     PUSHER_APP_ID: z.string().optional(),
     PUSHER_SECRET: z.string().optional(),
