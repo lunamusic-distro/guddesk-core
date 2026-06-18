@@ -7,7 +7,7 @@ import { authenticateExternal } from "@/lib/external-auth";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    const auth = authenticateExternal(req, "POST", "/api/external/conversations", body);
+    const auth = authenticateExternal(req, "POST", body);
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 
@@ -84,8 +84,7 @@ export async function POST(req: NextRequest) {
 // GET /api/external/conversations — list conversations
 export async function GET(req: NextRequest) {
   try {
-    const path = new URL(req.url).pathname;
-    const auth = authenticateExternal(req, "GET", path);
+    const auth = authenticateExternal(req, "GET");
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 

@@ -6,8 +6,7 @@ import { authenticateExternal } from "@/lib/external-auth";
 // GET /api/external/stats?days=30
 export async function GET(req: NextRequest) {
   try {
-    const path = new URL(req.url).pathname;
-    const auth = authenticateExternal(req, "GET", path);
+    const auth = authenticateExternal(req, "GET");
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 

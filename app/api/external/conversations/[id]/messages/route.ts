@@ -11,8 +11,7 @@ export async function POST(
   try {
     const { id } = await params;
     const body = await req.text();
-    const path = `/api/external/conversations/${id}/messages`;
-    const auth = authenticateExternal(req, "POST", path, body);
+    const auth = authenticateExternal(req, "POST", body);
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 

@@ -10,8 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const path = `/api/external/conversations/${id}`;
-    const auth = authenticateExternal(req, "GET", path);
+    const auth = authenticateExternal(req, "GET");
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 
@@ -94,8 +93,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await req.text();
-    const path = `/api/external/conversations/${id}`;
-    const auth = authenticateExternal(req, "PATCH", path, body);
+    const auth = authenticateExternal(req, "PATCH", body);
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 
@@ -173,8 +171,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const path = `/api/external/conversations/${id}`;
-    const auth = authenticateExternal(req, "DELETE", path);
+    const auth = authenticateExternal(req, "DELETE");
     if (auth instanceof NextResponse) return auth;
     const { workspaceId } = auth;
 
