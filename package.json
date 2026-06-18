@@ -97,7 +97,13 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "*"
+      "@prisma/engines",
+      "prisma",
+      "contentlayer2",
+      "esbuild",
+      "protobufjs",
+      "sharp",
+      "unrs-resolver"
     ]
   },
   "devDependencies": {
