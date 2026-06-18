@@ -9,10 +9,12 @@ export interface AuthenticatedRequest {
 export function authenticateExternal(
   req: NextRequest,
   method: string,
-  path: string,
+  path?: string,
   body?: string,
 ): AuthenticatedRequest | NextResponse {
-  const result = verifyHmacSignature(method, path, req.headers, body);
+  const url = new URL(req.url);
+  const fullPath = path || url.pathname + url.search;
+  const result = verifyHmacSignature(method, fullPath, req.headers, body);
 
   if (!result.valid) {
     return NextResponse.json(
