@@ -43,6 +43,7 @@ export async function createWorkspace(data: { name: string; slug: string }) {
     revalidatePath("/dashboard");
     return { status: "success", workspaceSlug: workspace.slug };
   } catch (error) {
+    console.error("Create workspace error:", error);
     if (error instanceof Error && error.message === "Unauthorized") {
       return { status: "error", message: "Unauthorized" };
     }
