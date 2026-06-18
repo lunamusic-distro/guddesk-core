@@ -483,6 +483,7 @@ model SlaPolicy {
   updatedAt        DateTime    @updatedAt @map(name: "updated_at")
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  timers    SlaTimer[]
 
   @@unique([workspaceId, priority])
   @@index([workspaceId])
